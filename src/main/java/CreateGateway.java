@@ -34,7 +34,7 @@ public class CreateGateway {
 
     public static void main(String[] args) {
 
-        String decisionName = "math";
+        String decisionName = "AnotherMathFunc";
 
         AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
                 .withCredentials(new ProfileCredentialsProvider(SECURITY_PROFILE_NAME)).withRegion(REGION).build();
@@ -46,16 +46,16 @@ public class CreateGateway {
         GetRestApisResult restApis = gateway.getRestApis(new GetRestApisRequest());
         RestApi decisionRestApi = restApis.getItems().stream()
                 .filter(item -> item.getName().equals(DECISION_REST_API_NAME)).findFirst()
-                .get();
+                .orElseThrow(RuntimeException::new);
 
         List<Resource> resources = gateway
                 .getResources(new GetResourcesRequest().withRestApiId(decisionRestApi.getId())).getItems();
-        Resource rootResource = resources.stream().filter(resource -> resource.getPath().equals("/")).findFirst().orElse(null);
+        Resource rootResource = resources.stream().filter(resource -> resource.getPath().equals("/")).findFirst().orElseThrow(RuntimeException::new);
 
         String decisionNameResourceId = createResource(gateway, decisionRestApi.getId(), rootResource.getId(), decisionName);
 
-        createModel(gateway, decisionRestApi, ()->getRequestModel(decisionName), "Input");
-        createModel(gateway, decisionRestApi, ()->getResponseModel(decisionName), "Output");
+        createModel(gateway, decisionRestApi, ()->getRequestModel(decisionName), decisionName + "Request");
+        createModel(gateway, decisionRestApi, ()->getResponseModel(decisionName), decisionName + "Response");
 
         createMethodForResource(gateway, decisionRestApi.getId(), decisionNameResourceId);
         createMethodResponse(gateway, decisionRestApi.getId(), decisionNameResourceId);
@@ -144,11 +144,11 @@ public class CreateGateway {
     public static String getRequestModel(String decisionName){
          return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n" + "        \"a\":{\"type\":\"number\"},\n"
                  + "        \"b\":{\"type\":\"number\"},\n" + "        \"op\":{\"type\":\"string\"}\n" + "    },\n"
-                 + "    \"title\":\"" + decisionName + "\"\n" + "}";
+                 + "    \"title\":\"" + decisionName + "Request" + "\"\n" + "}";
     }
 
     public static String getResponseModel(String decisionName){
         return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n" + "        \"c\":{\"type\":\"number\"}\n"
-                + "    },\n" + "    \"title\":\"" + decisionName +"\"\n" + "}";
+                + "    },\n" + "    \"title\":\"" + decisionName +"Response\"\n" + "}";
     }
 }
