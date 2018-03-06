@@ -34,7 +34,7 @@ public class CreateGateway {
 
     public static void main(String[] args) {
 
-        String decisionName = "AnotherMathFunc";
+        String decisionName = "IsAmazonCool";
 
         AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
                 .withCredentials(new ProfileCredentialsProvider(SECURITY_PROFILE_NAME)).withRegion(REGION).build();
@@ -142,13 +142,18 @@ public class CreateGateway {
     }
 
     public static String getRequestModel(String decisionName){
-         return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n" + "        \"a\":{\"type\":\"number\"},\n"
-                 + "        \"b\":{\"type\":\"number\"},\n" + "        \"op\":{\"type\":\"string\"}\n" + "    },\n"
-                 + "    \"title\":\"" + decisionName + "Request" + "\"\n" + "}";
+         return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n"
+                 + "        \"JavaVersionNumber\":{\"type\":\"number\"},\n"
+                 + "        \"PythonVersion\":{\"type\":\"number\"},\n"
+                 + "        \"Serverless\":{\"type\":\"string\"}\n" + "    },\n"
+                 + "    \"title\":\"IsAmazonCoolRequest\"\n" + "}";
     }
 
     public static String getResponseModel(String decisionName){
-        return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n" + "        \"c\":{\"type\":\"number\"}\n"
-                + "    },\n" + "    \"title\":\"" + decisionName +"Response\"\n" + "}";
+        return "{\n" + "    \"type\":\"object\",\n" + "    \"properties\":{\n"
+                + "        \"JavaVersionNumber\":{\"type\":\"number\"},\n"
+                + "        \"PythonVersion\":{\"type\":\"number\"},\n"
+                + "        \"Serverless\":{\"type\":\"string\"}\n" + "    },\n"
+                + "    \"title\":\"IsAmazonCoolRequest\"\n" + "}";
     }
 }
